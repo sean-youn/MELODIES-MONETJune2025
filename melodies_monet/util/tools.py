@@ -107,11 +107,11 @@ def get_relhum(temp, press, vap):
 
 
 def long_to_wide(df):
-    from pandas import Series, merge
+    from pandas import merge
     w = df.pivot_table(values='obs',
                        index=['time', 'siteid'],
                        columns='variable').reset_index()
-    cols = Series(df.columns)
+    # cols = df.columns
     g = df.groupby('variable')
     for name, group in g:
         w[name + '_unit'] = group.units.unique()[0]
@@ -296,16 +296,23 @@ def resample_stratify(da, levels, vertical, axis=1,interpolation='linear',extrap
     return out
 
 def vert_interp(ds_model,df_obs,var_name_list):
-    from pandas import merge_asof, Series
+    from pandas import merge_asof
+
+    ds_model['pressure_model_nan'] = ds_model['pressure_model'].copy()
+    var_name_list.append('pressure_model_nan')
 
     var_out_list = []
     for var_name in var_name_list:
         if var_name == 'pressure_model':
             out = resample_stratify(ds_model[var_name],sorted(ds_model.pressure_obs.squeeze().values,reverse=True),
                                       ds_model['pressure_model'],axis=1,
+                                      interpolation='linear',extrapolation='linear')
+            #Use linear extrapolation for the pressure_model so that later these will pair correctly with pressure_obs.
+        elif var_name == 'pressure_model_nan':
+            out = resample_stratify(ds_model[var_name],sorted(ds_model.pressure_obs.squeeze().values,reverse=True),
+                                      ds_model['pressure_model'],axis=1,
                                       interpolation='linear',extrapolation='nan')
-            #Use extrapolation nan for the pressure so that later you can assign the nan values to the pressure_obs value 
-            #instead of the midpoint of the edge model cells. This is needed for the pairing later on.
+            #Keep track of the extrapolation points with a NaN so that can print out notes and warnings for users.
         else:
             out = resample_stratify(ds_model[var_name],sorted(ds_model.pressure_obs.squeeze().values,reverse=True),
                                   ds_model['pressure_model'],axis=1,
@@ -314,14 +321,14 @@ def vert_interp(ds_model,df_obs,var_name_list):
         var_out_list.append(out)
 
     df_model = xr.merge(var_out_list).to_dataframe().reset_index()
-    for time in df_model.time.unique():
-        if df_model[df_model.time == time].pressure_obs.unique() > df_model[df_model.time == time].pressure_model.max():
-            df_model.fillna({'pressure_model':df_model[df_model.time == time].pressure_obs},inplace=True)
-        elif df_model[df_model.time == time].pressure_obs.unique() < df_model[df_model.time == time].pressure_model.min():
-            df_model.fillna({'pressure_model':df_model[df_model.time == time].pressure_obs},inplace=True)
-            print('Warning: You are pairing obs data above the model top. This is not recommended.')
-            print(time)
-    df_model.drop(labels=['x','y','z','pressure_obs','time_obs'], axis=1, inplace=True)
+    for x in df_model.x.unique():
+        if df_model[df_model.x == x].pressure_obs.unique() > df_model[df_model.x == x].pressure_model_nan.max():
+            print(f"Note: Point {x!r}, is below the mid-point of the lowest model level and nearest neighbor extrapolation",
+                 "occurs for vertical pairing.")
+        elif df_model[df_model.x == x].pressure_obs.unique() < df_model[df_model.x == x].pressure_model_nan.min():
+            print(f"Warning: Point {x!r}, is above the mid-point of the highest model level and nearest neighbor extrapolation", 
+            "occurs for vertical pairing. Extrapolating beyond the model top is not recommended. Proceed with caution.")
+    df_model.drop(labels=['x','y','z','pressure_obs','pressure_model_nan','time_obs'], axis=1, inplace=True)
     df_model.rename(columns={'pressure_model':'pressure_obs'}, inplace=True)
 
     final_df_model = merge_asof(df_obs, df_model, 
@@ -331,7 +338,7 @@ def vert_interp(ds_model,df_obs,var_name_list):
     return final_df_model
 
 def mobile_and_ground_pair(ds_model,df_obs, var_name_list):
-    from pandas import merge_asof, Series
+    from pandas import merge_asof
     
     var_out_list = []
     # Extract just the surface level data from correct model variables
@@ -366,7 +373,7 @@ def find_obs_time_bounds(files=[],time_var=None):
         str or list of str containing filenames that should be read.
         
     time_var : str
-        Optional, variable name that should be assumed to be time when reading aircaft csv files.
+        Optional, variable name that should be assumed to be time when reading aircraft csv files.
 
     Returns
     -------
@@ -474,7 +481,7 @@ def convert_std_to_amb_ams(ds,convert_vars=[],temp_var=None,pres_var=None):
     # Units of pres_var must be Pa 
     
     #So I just need to convert the obs from std to amb.
-    Losch = 2.69e25 # loschmidt's number
+    # Losch = 2.69e25 # loschmidt's number
     #I checked the more detailed icart files
     #273 K, 1 ATM (101325 Pa)
     std_ams = 101325.*N_A/(R*273.)
@@ -495,7 +502,7 @@ def convert_std_to_amb_bc(ds,convert_vars=[],temp_var=None,pres_var=None):
     # Units of pres_var must be Pa 
     
     #So I just need to convert the obs from std to amb.
-    Losch = 2.69e25 # loschmidt's number
+    # Losch = 2.69e25 # loschmidt's number
     #1013 mb, 273 K (101300 Pa)
     std_bc = 101300.*N_A/(R*273.)
     #use pressure_obs now, which is in pa

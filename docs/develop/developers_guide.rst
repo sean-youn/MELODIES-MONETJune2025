@@ -71,7 +71,7 @@ these instructions:
 
 (c) Clone [#clone]_ and link the latest development version of the MELODIES MONET::
 
-       $ git clone git@github.com:NOAA-CSL/MELODIES-MONET.git
+       $ git clone git@github.com:NCAR/MELODIES-MONET.git
        $ cd MELODIES-MONET
        $ git checkout develop
        $ pip install --force-reinstall --no-deps --editable .
@@ -87,14 +87,14 @@ changes.
 (a) Fork the GitHub repository to your own GitHub account
     using the "Fork" button near the top right:
 
-    https://github.com/NOAA-CSL/MELODIES-MONET
+    https://github.com/NCAR/MELODIES-MONET
 
     .. note::
        You can pull updates from the main NOAA repository
        by using the "Fetch Upstream" button on your fork.
        Alternatively: [#clone]_ ::
 
-          $ git remote add upstream git@github.com:NOAA-CSL/MELODIES-MONET.git
+          $ git remote add upstream git@github.com:NCAR/MELODIES-MONET.git
           $ git pull upstream main
           $ git push origin main
 
@@ -152,8 +152,9 @@ The generated HTML will be created in ``docs/_build/html``,
 with ``docs/_build/html/index.html`` the main page that can be
 viewed in any browser.
 
-Please see the `MELODIES-MONET Documentation <https://github.com/orgs/NOAA-CSL/projects/6>`_ 
-project on GitHub to learn about current and future development.
+Please refer to the
+`MELODIES MONET project board <https://github.com/orgs/NCAR/projects/150/>`__ 
+to learn more about our current and future documentation plans.
 
 
 .. _clone-notes:
@@ -191,7 +192,7 @@ Code workflow
 -------------
 
 The way the code is constructed (see :doc:`../getting_started/software_architecture`)
-is based largely on code contained within a driver (``dirver.py``).
+is based largely on code contained within a driver (``driver.py``).
 The main class, contained in ``driver.py``, is ``analysis``.
 ``analysis`` is in charge of creating and managing all other classes.
 This driver contains the ``observation``, ``model`` and ``pair`` classes,

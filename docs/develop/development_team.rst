@@ -26,11 +26,11 @@ David Fillmore     dwfncar         Satellite obs, Plots, Stats, Connection to ME
 Colin Harkins      colin-harkins   Docs, Aircraft obs, Plots, Stats
 Louisa Emmons      lkemmons        Docs, Aircraft obs, Plots, Stats
 Rebecca Schwantes  rschwant        Docs, Surface and aircraft obs, Plots, Stats
-Margaret Bruckner  mbruckner-work  Docs, Satellite obs, Plots, Stats
+Maggie Bruckner    mbruckner-work  Docs, Satellite obs, Plots, Stats
 Rebecca Buchholz   rrbuchholz      Docs, Satellite obs, Plots, Stats
 Pablo Lichtig      blychs          Docs, Satellite and surface obs, Plots, Stats
 Quazi Ziaur Rasool quaz115         Docs, Aircraft obs, Plots, Stats
-Beiming Tang       btang1          Docs, Surface and ozone sonder obs, Plots, Stats
+Beiming Tang       btang1          Docs, Surface and sonde obs, Plots, Stats
 ================== =============== ========================================================
 
 Development Team Members
@@ -52,8 +52,8 @@ in regional coupled chemistry-meteorology models. My plans include testing and
 expanding the capability of MELODIES MONET for evaluating simulations with
 research and operational models of fire impacts on air quality and weather.
 
-**Margaret Bruckner:**
-I am a graduate student at the University of Wisconsin-Madison. My development plans
+**Maggie Bruckner:**
+I am an NRC postdoc associated with NOAA CSL. My development plans
 primarily focus on adding capabilities for comparison of satellite observations to model
 output and expanding data processing options. 
 
@@ -98,7 +98,7 @@ TROPOMI NO2 L2 product released by KNMI, paring the satellite pixels to WRF-Chem
 the plotting and statistical analyses in satellite-model comparisons.
 
 **Rebecca Schwantes:**
-I am a research scientist at CIRES/NOAA CSL coordinating the 
+I am a research chemist at NOAA CSL coordinating the 
 development of MELODIES MONET. My development plans include incorporating 
 additional surface observational datasets, adding the capability of pairing 
 to aircraft observations, and expanding plotting and statistics for analysis 
